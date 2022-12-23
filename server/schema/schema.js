@@ -1,6 +1,6 @@
 const authors = require('../sampleData');
 
-const { GraphQLObjectType, GraphQLID, GraphQLString, GraphQLSchema } = require('graphql');
+const { GraphQLObjectType, GraphQLID, GraphQLString, GraphQLSchema, GraphQLList } = require('graphql');
 
 const AuthorType = new GraphQLObjectType({
   name: 'Author',
@@ -14,6 +14,12 @@ const AuthorType = new GraphQLObjectType({
 const RootQuery = new GraphQLObjectType({
   name: 'RootQueryType',
   fields: {
+    authors: {
+      type: new GraphQLList(AuthorType),
+      resolve(parent, args){
+        return authors;
+      }
+    },
     author: {
       type: AuthorType,
       args: { id: { type: GraphQLID } },
