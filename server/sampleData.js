@@ -34,7 +34,13 @@ const books = [
     title: 'Book3',
     genre: 'social',
     authorId: '1144'
-  }
+  },
+  {
+    id: '4',
+    title: 'Book4',
+    genre: 'computers',
+    authorId: '1122'
+  },
 ];
 
 module.exports = { authors, books };
