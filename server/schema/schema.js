@@ -1,4 +1,7 @@
-const authors = require('../sampleData');
+const { authors, books } = require('../sampleData');
+
+console.log(authors);
+console.log(books);
 
 const { GraphQLObjectType, GraphQLID, GraphQLString, GraphQLSchema, GraphQLList } = require('graphql');
 
@@ -8,6 +11,21 @@ const AuthorType = new GraphQLObjectType({
     id: { type: GraphQLID },
     name: { type: GraphQLString },
     location: { type: GraphQLString }
+  })
+});
+
+const BookType = new GraphQLObjectType({
+  name: 'Book',
+  fields: () => ({
+    id: { type: GraphQLID },
+    title: { type: GraphQLString },
+    genre: { type: GraphQLString },
+    author: { 
+      type: AuthorType,
+      resolve(parent, args){
+        return authors.find(author => author.id === parent.authorId)
+      }
+    }
   })
 });
 
@@ -25,6 +43,19 @@ const RootQuery = new GraphQLObjectType({
       args: { id: { type: GraphQLID } },
       resolve(parent, args){
         return authors.find(author => args.id === author.id )
+      }
+    },
+    books: {
+      type: new GraphQLList(BookType),
+      resolve(parent, args){
+        return books
+      } 
+    },
+    book: {
+      type: BookType,
+      args: { id: { type: GraphQLID }},
+      resolve(parent, args){
+        return books.find(book => book.id === args.id)
       }
     }
   }
