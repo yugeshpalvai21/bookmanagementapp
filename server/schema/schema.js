@@ -65,12 +65,18 @@ const AuthorType = new GraphQLObjectType({
     id: { type: GraphQLID },
     name: { type: GraphQLString },
     location: { type: GraphQLString },
-    // books: { 
-    //   type: new GraphQLList(BookType),
-    //   resolve(parent, args){
-    //     return books.filter(book => book.authorId === parent.id)
-    //    }
-    // }
+    books: { 
+      type: new GraphQLList(BookType),
+      resolve(parent, args){
+        return new Promise((resolve, reject) => {
+          const query = `SELECT * FROM books WHERE author_id = ${parent.id}`;
+          client.query(query, (err, res) => {
+            if (err) reject(err);
+            resolve(res.rows);
+          });
+        });
+       }
+    }
   })
 });
 
@@ -82,8 +88,14 @@ const BookType = new GraphQLObjectType({
     genre: { type: GraphQLString },
     author: { 
       type: AuthorType,
-      resolve(parent, args){
-        return authors.find(author => author.id === parent.authorId)
+      resolve(parent, args, context, info){
+        return new Promise((resolve, reject) => {          
+          const query = `SELECT * FROM authors WHERE id = ${parent.author_id} LIMIT 1`;
+          client.query(query, (err, res) => {
+            if (err) reject(err);
+            resolve(res.rows[0]);
+          })
+        });
       }
     }
   })
@@ -109,20 +121,38 @@ const RootQuery = new GraphQLObjectType({
       type: AuthorType,
       args: { id: { type: GraphQLID } },
       resolve(parent, args){
-        return authors.find(author => args.id === author.id )
+        return new Promise((resolve, reject) => {
+          const query = `SELECT * FROM authors WHERE id = ${args.id}`;
+          client.query(query, (err, res) => {
+            if(err) reject(err);
+            resolve(res.rows[0]);
+          });
+        });
       }
     },
     books: {
       type: new GraphQLList(BookType),
       resolve(parent, args){
-        return books
+        return new Promise((resolve, reject) => {
+          const query = `SELECT * FROM books`;
+          client.query(query, (err, res) => {
+            if (err) reject(err);
+            resolve(res.rows);
+          });
+        });
       } 
     },
     book: {
       type: BookType,
       args: { id: { type: GraphQLID }},
       resolve(parent, args){
-        return books.find(book => book.id === args.id)
+        return new Promise((resolve, reject) => {
+          const query = `SELECT * FROM books WHERE id = ${args.id}`;
+          client.query(query, (err, res) => {
+            if (err) reject(err);
+            resolve(res.rows[0]);
+          });
+        });
       }
     }
   }
