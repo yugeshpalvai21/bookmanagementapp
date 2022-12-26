@@ -1,5 +1,5 @@
 const { authors, books } = require('../sampleData');
-const { GraphQLObjectType, GraphQLID, GraphQLString, GraphQLSchema, GraphQLList } = require('graphql');
+const { GraphQLObjectType, GraphQLID, GraphQLString, GraphQLSchema, GraphQLList, GraphQLInputObjectType } = require('graphql');
 
 const { Client } = require('pg');
 
@@ -158,5 +158,32 @@ const RootQuery = new GraphQLObjectType({
   }
 });
 
+const Mutation = new GraphQLObjectType({
+  name: "MutationType",
+  fields: {
+    addAuthor: {
+      type: AuthorType,
+      args: { 
+        name: { type: GraphQLString },
+        location: { type: GraphQLString }
+      },
+      resolve: (parent, args) => {
+        return new Promise((resolve, reject) => {
+          const query = `INSERT INTO authors (name, location) VALUES ('${args.name}', '${args.location}') RETURNING *`;
+          console.log(query);
+          client.query(query, (err, res) => {
+            if (err) reject(err);
+            console.log(res);
+            resolve(res.rows[0]);
+          });
+        });
+      }
+    }
+  }
+});
 
-module.exports = new GraphQLSchema({query: RootQuery});
+
+module.exports = new GraphQLSchema({
+  query: RootQuery,
+  mutation: Mutation
+});
