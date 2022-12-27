@@ -178,6 +178,27 @@ const Mutation = new GraphQLObjectType({
           });
         });
       }
+    },
+    addBook: {
+      type: BookType,
+      args: {
+        title: { type: GraphQLString },
+        genre: { type: GraphQLString },
+        authorId: { type: GraphQLID }
+      },
+      resolve(parent, args){
+        return new Promise((resolve, reject) => {
+          const query = `INSERT INTO books (title, genre, author_id) VALUES ('${args.title}', '${args.genre}', '${args.authorId}') RETURNING *`;
+          // console.log(query);
+          client.query(query, (err, res) => {
+            // console.log(err);
+            if(err){
+              reject(err)
+            }
+            resolve(res.rows[0]);
+          });
+        });
+      }
     }
   }
 });
