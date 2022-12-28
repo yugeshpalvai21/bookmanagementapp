@@ -1,9 +1,7 @@
 const { GraphQLObjectType, GraphQLID, GraphQLString, GraphQLList } = require('graphql');
 
-const { AuthorType } = require('../types');
-const { BookType } = require('../types');
-
-const client = require('../../database/client');
+const { AuthorType } = require('../types/types');
+const { BookType } = require('../types/types');
 
 
 const RootQuery = new GraphQLObjectType({
@@ -14,7 +12,7 @@ const RootQuery = new GraphQLObjectType({
       resolve: (parent, args, context, info) => {
         return new Promise((resolve, reject) => {
           const query = `SELECT * FROM authors`; 
-          client.query(query, (err, res) => {
+          context.db.query(query, (err, res) => {
             if (err) reject(err);
             console.log(res.rows);
             resolve(res.rows); 
@@ -25,10 +23,10 @@ const RootQuery = new GraphQLObjectType({
     author: {
       type: AuthorType,
       args: { id: { type: GraphQLID } },
-      resolve(parent, args){
+      resolve(parent, args, context, info){
         return new Promise((resolve, reject) => {
           const query = `SELECT * FROM authors WHERE id = ${args.id}`;
-          client.query(query, (err, res) => {
+          context.db.query(query, (err, res) => {
             if(err) reject(err);
             resolve(res.rows[0]);
           });
@@ -37,10 +35,10 @@ const RootQuery = new GraphQLObjectType({
     },
     books: {
       type: new GraphQLList(BookType),
-      resolve(parent, args){
+      resolve(parent, args, context, info){
         return new Promise((resolve, reject) => {
           const query = `SELECT * FROM books`;
-          client.query(query, (err, res) => {
+          context.db.query(query, (err, res) => {
             if (err) reject(err);
             resolve(res.rows);
           });
@@ -50,10 +48,10 @@ const RootQuery = new GraphQLObjectType({
     book: {
       type: BookType,
       args: { id: { type: GraphQLID }},
-      resolve(parent, args){
+      resolve(parent, args, context, info){
         return new Promise((resolve, reject) => {
           const query = `SELECT * FROM books WHERE id = ${args.id}`;
-          client.query(query, (err, res) => {
+          context.db.query(query, (err, res) => {
             if (err) reject(err);
             resolve(res.rows[0]);
           });

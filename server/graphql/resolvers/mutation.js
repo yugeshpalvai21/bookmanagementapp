@@ -1,9 +1,7 @@
 const { GraphQLObjectType, GraphQLID, GraphQLString, GraphQLList } = require('graphql');
 
-const { AuthorType } = require('../types');
-const { BookType } = require('../types');
-
-const client = require('../../database/client');
+const { AuthorType } = require('../types/types');
+const { BookType } = require('../types/types');
 
 const Mutation = new GraphQLObjectType({
   name: "MutationType",
@@ -14,11 +12,10 @@ const Mutation = new GraphQLObjectType({
         name: { type: GraphQLString },
         location: { type: GraphQLString }
       },
-      resolve: (parent, args) => {
+      resolve: (parent, args, context, info) => {
         return new Promise((resolve, reject) => {
           const query = `INSERT INTO authors (name, location) VALUES ('${args.name}', '${args.location}') RETURNING *`;
-          console.log(query);
-          client.query(query, (err, res) => {
+          context.db.query(query, (err, res) => {
             if (err) reject(err);
             console.log(res);
             resolve(res.rows[0]);
@@ -33,11 +30,11 @@ const Mutation = new GraphQLObjectType({
         genre: { type: GraphQLString },
         authorId: { type: GraphQLID }
       },
-      resolve(parent, args){
+      resolve(parent, args, context, info){
         return new Promise((resolve, reject) => {
           const query = `INSERT INTO books (title, genre, author_id) VALUES ('${args.title}', '${args.genre}', '${args.authorId}') RETURNING *`;
           // console.log(query);
-          client.query(query, (err, res) => {
+          context.db.query(query, (err, res) => {
             // console.log(err);
             if(err){
               reject(err)

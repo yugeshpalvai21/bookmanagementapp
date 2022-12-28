@@ -1,5 +1,5 @@
-const AuthorTypeInject = require('./models/AuthorType');
-const BookTypeInject = require('./models/BookType');
+const AuthorTypeInject = require('./AuthorType');
+const BookTypeInject = require('./BookType');
 
 const types = {};
 types.AuthorType = AuthorTypeInject(types);

@@ -1,11 +1,15 @@
 const express = require('express');
 const { graphqlHTTP } = require('express-graphql');
+const client = require('./database/client');
+
 
 const schema = require('./graphql/schema');
 
 require('dotenv').config();
 
 const app = express();
+
+const context = { db: client };
 
 // console.log(process.env.NODE_ENV);
 // console.log(process.env.PORT);
@@ -14,6 +18,7 @@ const app = express();
 
 app.use('/graphql', graphqlHTTP({
   schema: schema,
+  context: context,
   graphiql: process.env.NODE_ENV === 'local'
 }));
 
