@@ -8,3 +8,6 @@
     - GraphQL
     - React
     - Apollo
+    - Typescript
+    - Jest and React Testing Library
+    - Cypress
