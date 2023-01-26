@@ -4,5 +4,8 @@
   "main": "index.js",
   "repository": "git@github.com:yugeshpalvai21/bookmanagementapp.git",
   "author": "Yugesh Palvai <yugeshpalvai21@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
 }
