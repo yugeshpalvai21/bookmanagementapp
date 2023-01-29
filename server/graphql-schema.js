@@ -1,4 +1,6 @@
-const { GraphQLObjectType, GraphQLSchema, GraphQLString } = require('graphql');
+const { GraphQLObjectType, GraphQLSchema, GraphQLString, GraphQLList } = require('graphql');
+
+const authors = require('../database/fixtures');
 
 const AuthorType = new GraphQLObjectType({
   name: "Author",
@@ -14,7 +16,17 @@ const RootQuery = new GraphQLObjectType({
   fields: {
     author: {
       type: AuthorType,
-      resolve: () => ({name: 'yugesh', location: 'India'})
+      args: { name: {type: GraphQLString }},
+      resolve(parent, args) {
+        return authors.find((author) => author.name === args.name)
+      }
+    },
+
+    authors: {
+      type: new GraphQLList(AuthorType),
+      resolve() { 
+        authors
+      }
     }
   },
 });
