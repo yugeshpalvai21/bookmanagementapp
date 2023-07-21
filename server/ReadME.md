@@ -1,1 +1,3 @@
 ### SETUP INSTRUCTIONS
+
+> TECH STACK (Node V20, Koa V2) 
