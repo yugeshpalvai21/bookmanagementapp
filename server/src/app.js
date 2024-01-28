@@ -2,7 +2,7 @@ const Koa = require('koa');
 const mount = require('koa-mount');
 const { graphqlHTTP } = require('koa-graphql');
 const serve = require('koa-static');
-const schema = require('./schema/schema');
+const schema = require('./graphql/schema');
 
 const path = require('path');
 
